@@ -31,6 +31,15 @@ export const {
     signIn,
     signOut,
 } = NextAuth({
+    events: {
+        async linkAccount({ user }) {
+            // Automatically verifying an email for Google and GitHub Sign Ins
+            await db.user.update({
+                where: { id: user.id },
+                data: { emailVerified: new Date() },
+            });
+        },
+    },
     callbacks: {
         async session({ token, session }) {
             console.log({
