@@ -17,6 +17,7 @@ import { Input } from "@/components/shadcn-ui/Input";
 import { Button } from "@/components/shadcn-ui/Button";
 import { PasswordInput } from "@/components/shadcn-ui/PasswordInput";
 import FormError from "@/components/FormError";
+import FromSuccess from "@/components/FormSuccess";
 
 function LoginForm() {
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -78,7 +79,8 @@ function LoginForm() {
                             )}
                         />
                     </div>
-                    <FormError message="Invalid credentials" />
+                    <FormError message="" />
+                    <FromSuccess message="" />
                     <Button type="submit" className="w-full">
                         Login
                     </Button>
