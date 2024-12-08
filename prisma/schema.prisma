@@ -28,7 +28,7 @@ model User {
   role          UserRole @default(USER)
   accounts      Account[]
   
-  @@map("users")
+  // @@map("users")
 }
 
 model Account {
@@ -49,5 +49,5 @@ model Account {
  
   @@unique([provider, providerAccountId])
 
-  @@map("accounts")
+  // @@map("accounts")
 }
