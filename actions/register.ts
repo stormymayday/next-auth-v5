@@ -5,7 +5,8 @@ import * as z from "zod";
 import { Prisma } from "@prisma/client";
 import { RegisterSchema } from "@/schemas";
 import { db } from "@/lib/db";
-import { getUserByEmail } from "@/utils/getUserByEmail";
+// import { getUserByEmail } from "@/utils/getUserByEmail";
+import { getUserByEmail } from "@/utils/user";
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
     const validatedFields = RegisterSchema.safeParse(values);
@@ -36,7 +37,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
             name,
             email,
             password: hashedPassword,
-        } as Prisma.UserCreateInput, // Added type assertion
+        },
     });
 
     // TODO: Send verification token email
