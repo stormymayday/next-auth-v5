@@ -14,7 +14,6 @@ import {
     FormMessage,
 } from "@/components/shadcn-ui/Form";
 import { Input } from "@/components/shadcn-ui/Input";
-import { PasswordInput } from "@/components/shadcn-ui/PasswordInput";
 import { Button } from "@/components/shadcn-ui/Button";
 
 function LoginForm() {
@@ -67,10 +66,7 @@ function LoginForm() {
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
                                     <FormControl>
-                                        <PasswordInput
-                                            {...field}
-                                            type="password"
-                                        />
+                                        <Input {...field} type="password" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
