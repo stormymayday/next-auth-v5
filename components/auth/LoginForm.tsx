@@ -18,8 +18,14 @@ import { Button } from "@/components/shadcn-ui/Button";
 import { PasswordInput } from "@/components/shadcn-ui/PasswordInput";
 import FormError from "@/components/FormError";
 import FromSuccess from "@/components/FormSuccess";
+import { login } from "@/actions/login";
+import { useState, useTransition } from "react";
 
 function LoginForm() {
+    const [isPending, startTransition] = useTransition();
+    const [error, setError] = useState<string | undefined>("");
+    const [success, setSuccess] = useState<string | undefined>("");
+
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
         defaultValues: {
@@ -28,9 +34,28 @@ function LoginForm() {
         },
     });
 
-    const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-        console.log(values);
-    };
+    function onSubmit(values: z.infer<typeof LoginSchema>) {
+        setError("");
+        setSuccess("");
+
+        startTransition(async () => {
+            try {
+                setError("");
+                setSuccess("");
+
+                const data: { error?: string; success?: string } = await login(
+                    values
+                );
+
+                setError(data?.error ?? "");
+                setSuccess(data?.success ?? "");
+
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            } catch (error) {
+                setError("Something went wrong!");
+            }
+        });
+    }
 
     return (
         <CardWrapper
@@ -56,6 +81,7 @@ function LoginForm() {
                                             {...field}
                                             type="email"
                                             maxLength={50}
+                                            disabled={isPending}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -72,6 +98,7 @@ function LoginForm() {
                                         <PasswordInput
                                             {...field}
                                             maxLength={30}
+                                            disabled={isPending}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -79,10 +106,14 @@ function LoginForm() {
                             )}
                         />
                     </div>
-                    <FormError message="" />
-                    <FromSuccess message="" />
-                    <Button type="submit" className="w-full">
-                        Login
+                    <FormError message={error} />
+                    <FromSuccess message={success} />
+                    <Button
+                        type="submit"
+                        className="min-w-full"
+                        disabled={isPending}
+                    >
+                        {isPending ? "Logging in..." : "Login"}
                     </Button>
                 </form>
             </Form>
