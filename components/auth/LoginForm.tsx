@@ -15,6 +15,7 @@ import {
 } from "@/components/shadcn-ui/Form";
 import { Input } from "@/components/shadcn-ui/Input";
 import { Button } from "@/components/shadcn-ui/Button";
+import { PasswordInput } from "@/components/shadcn-ui/PasswordInput";
 
 function LoginForm() {
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -66,7 +67,10 @@ function LoginForm() {
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="password" />
+                                        <PasswordInput
+                                            {...field}
+                                            maxLength={30}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
