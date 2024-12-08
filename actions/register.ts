@@ -2,7 +2,7 @@
 
 import bcrypt from "bcryptjs";
 import * as z from "zod";
-import { Prisma } from "@prisma/client";
+// import { Prisma } from "@prisma/client";
 import { RegisterSchema } from "@/schemas";
 import { db } from "@/lib/db";
 // import { getUserByEmail } from "@/utils/getUserByEmail";
