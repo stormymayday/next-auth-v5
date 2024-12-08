@@ -31,6 +31,10 @@ export const {
     signIn,
     signOut,
 } = NextAuth({
+    pages: {
+        signIn: "/auth/login",
+        error: "auth/error",
+    },
     events: {
         async linkAccount({ user }) {
             // Automatically verifying an email for Google and GitHub Sign Ins
@@ -42,10 +46,6 @@ export const {
     },
     callbacks: {
         async session({ token, session }) {
-            console.log({
-                sessionToken: token,
-            });
-
             if (token.role && session.user) {
                 session.user.role = token.role;
             }

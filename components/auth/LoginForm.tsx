@@ -20,8 +20,15 @@ import FormError from "@/components/FormError";
 import FromSuccess from "@/components/FormSuccess";
 import { login } from "@/actions/login";
 import { useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 
 function LoginForm() {
+    const searchParams = useSearchParams();
+    const urlError =
+        searchParams.get("error") === "OAuthAccountNotLinked"
+            ? "Email already in use with different provider!"
+            : "";
+
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
@@ -35,9 +42,11 @@ function LoginForm() {
     });
 
     function onSubmit(values: z.infer<typeof LoginSchema>) {
+        // Clearing error and success
         setError("");
         setSuccess("");
 
+        // Pending State
         startTransition(async () => {
             try {
                 setError("");
@@ -49,10 +58,13 @@ function LoginForm() {
 
                 setError(data?.error ?? "");
                 setSuccess(data?.success ?? "");
-
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
-                setError("Something went wrong!");
+                const errorMsg =
+                    error instanceof Error
+                        ? error.message
+                        : "Something went wrong!";
+                // setError("Something went wrong!");
+                setError(errorMsg);
             }
         });
     }
@@ -106,7 +118,7 @@ function LoginForm() {
                             )}
                         />
                     </div>
-                    <FormError message={error} />
+                    <FormError message={error || urlError} />
                     <FromSuccess message={success} />
                     <Button
                         type="submit"
