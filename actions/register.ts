@@ -2,6 +2,7 @@
 
 import bcrypt from "bcryptjs";
 import * as z from "zod";
+import { Prisma } from "@prisma/client";
 import { RegisterSchema } from "@/schemas";
 import { db } from "@/lib/db";
 import { getUserByEmail } from "@/utils/getUserByEmail";
@@ -33,9 +34,9 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     await db.user.create({
         data: {
             name,
-            email: email,
+            email,
             password: hashedPassword,
-        },
+        } as Prisma.UserCreateInput, // Added type assertion
     });
 
     // TODO: Send verification token email
