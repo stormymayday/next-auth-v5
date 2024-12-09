@@ -2,7 +2,7 @@ import NextAuth, { DefaultSession } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db";
 import authConfig from "@/auth.config";
-import { getUserById } from "@/utils/getUserById";
+import { getUserById } from "@/utils/user/getUserById";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { JWT } from "next-auth/jwt";
 import { UserRole } from "@prisma/client";
@@ -45,6 +45,29 @@ export const {
         },
     },
     callbacks: {
+        async signIn({ user, account }) {
+            // Allowing OAuth Sign In without email verification
+            if (account?.provider !== "credentials") {
+                return true;
+            }
+
+            if (!user.id) {
+                return false;
+            }
+
+            // Searing for an existing user
+            const existingUser = await getUserById(user.id);
+
+            // Checking if email is verified
+            if (!existingUser || !existingUser.emailVerified) {
+                // Preventing Sign In if email is not verified
+                return false;
+            }
+
+            // TODO: Add 2FA check
+
+            return true;
+        },
         async session({ token, session }) {
             if (token.role && session.user) {
                 session.user.role = token.role;
