@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/shadcn-ui/Button";
+import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 
 interface BackButtonProps {

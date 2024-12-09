@@ -11,9 +11,9 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/shadcn-ui/Form";
-import { PasswordInput } from "@/components/shadcn-ui/PasswordInput";
-import { Button } from "@/components/shadcn-ui/Button";
+} from "@/components/ui/Form";
+import { PasswordInput } from "@/components/ui/PasswordInput";
+import { Button } from "@/components/ui/Button";
 import CardWrapper from "@/components/auth/CardWrapper";
 import FormError from "@/components/FormError";
 import FromSuccess from "@/components/FormSuccess";

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Input } from "@/components/shadcn-ui/Input";
+import { Input } from "@/components/ui/Input";
 import { AiOutlineEye } from "react-icons/ai";
 import { TbEyeClosed } from "react-icons/tb";
 

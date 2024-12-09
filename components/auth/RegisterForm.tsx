@@ -11,11 +11,11 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/shadcn-ui/Form";
+} from "@/components/ui/Form";
 import { register } from "@/actions/register";
-import { Input } from "@/components/shadcn-ui/Input";
-import { PasswordInput } from "@/components/shadcn-ui/PasswordInput";
-import { Button } from "@/components/shadcn-ui/Button";
+import { Input } from "@/components/ui/Input";
+import { PasswordInput } from "@/components/ui/PasswordInput";
+import { Button } from "@/components/ui/Button";
 import CardWrapper from "@/components/auth/CardWrapper";
 import FormError from "@/components/FormError";
 import FromSuccess from "@/components/FormSuccess";

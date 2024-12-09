@@ -5,7 +5,7 @@ import {
     CardHeader,
     CardContent,
     CardFooter,
-} from "@/components/shadcn-ui/Card";
+} from "@/components/ui/Card";
 import Header from "@/components/auth/Header";
 import Social from "@/components/auth/Social";
 import BackButton from "@/components/auth/BackButton";
