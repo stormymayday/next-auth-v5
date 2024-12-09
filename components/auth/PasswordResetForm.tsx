@@ -1,10 +1,9 @@
 "use client";
 
-import CardWrapper from "@/components/auth/CardWrapper";
-import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginSchema } from "@/schemas";
+import { ResetPasswordSchema } from "@/schemas";
 import {
     Form,
     FormControl,
@@ -15,34 +14,25 @@ import {
 } from "@/components/shadcn-ui/Form";
 import { Input } from "@/components/shadcn-ui/Input";
 import { Button } from "@/components/shadcn-ui/Button";
-import { PasswordInput } from "@/components/shadcn-ui/PasswordInput";
+import CardWrapper from "@/components/auth/CardWrapper";
 import FormError from "@/components/FormError";
 import FromSuccess from "@/components/FormSuccess";
-import { login } from "@/actions/login";
+import { resetPassword } from "@/actions/resetPassword";
 import { useState, useTransition } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
 
-function LoginForm() {
-    const searchParams = useSearchParams();
-    const urlError =
-        searchParams.get("error") === "OAuthAccountNotLinked"
-            ? "Email already in use with different provider!"
-            : "";
-
+function PasswordResetForm() {
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
 
-    const form = useForm<z.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema),
+    const form = useForm<z.infer<typeof ResetPasswordSchema>>({
+        resolver: zodResolver(ResetPasswordSchema),
         defaultValues: {
             email: "",
-            password: "",
         },
     });
 
-    function onSubmit(values: z.infer<typeof LoginSchema>) {
+    function onSubmit(values: z.infer<typeof ResetPasswordSchema>) {
         // Clearing error and success
         setError("");
         setSuccess("");
@@ -53,9 +43,8 @@ function LoginForm() {
                 setError("");
                 setSuccess("");
 
-                const data: { error?: string; success?: string } = await login(
-                    values
-                );
+                const data: { error?: string; success?: string } =
+                    await resetPassword(values);
 
                 setError(data?.error ?? "");
                 setSuccess(data?.success ?? "");
@@ -64,7 +53,6 @@ function LoginForm() {
                     error instanceof Error
                         ? error.message
                         : "Something went wrong!";
-                // setError("Something went wrong!");
                 setError(errorMsg);
             }
         });
@@ -72,15 +60,14 @@ function LoginForm() {
 
     return (
         <CardWrapper
-            headerLabel="Welcome back"
-            backButtonLabel="Don't have an account?"
-            backButtonHref="/auth/register"
-            showSocial
+            headerLabel="Forgot your password?"
+            backButtonLabel="Back to login"
+            backButtonHref="/auth/login"
         >
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-6"
+                    onSubmit={form.handleSubmit(onSubmit)}
                 >
                     <div className="space-y-4">
                         <FormField
@@ -92,6 +79,7 @@ function LoginForm() {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            // placeholder="john.doe@example.com"
                                             type="email"
                                             maxLength={50}
                                             disabled={isPending}
@@ -101,46 +89,20 @@ function LoginForm() {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <PasswordInput
-                                            {...field}
-                                            maxLength={30}
-                                            disabled={isPending}
-                                        />
-                                    </FormControl>
-                                    <Button
-                                        size="sm"
-                                        variant="link"
-                                        asChild
-                                        className="px-0 font-normal"
-                                    >
-                                        <Link href="/auth/reset">
-                                            Forgot password?
-                                        </Link>
-                                    </Button>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                     </div>
-                    <FormError message={error || urlError} />
+                    <FormError message={error} />
                     <FromSuccess message={success} />
                     <Button
-                        type="submit"
                         className="min-w-full"
+                        type="submit"
                         disabled={isPending}
                     >
-                        {isPending ? "Logging in..." : "Login"}
+                        {isPending ? "Sending an email..." : "Send reset email"}
                     </Button>
                 </form>
             </Form>
         </CardWrapper>
     );
 }
-export default LoginForm;
+
+export default PasswordResetForm;

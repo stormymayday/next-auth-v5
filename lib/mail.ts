@@ -18,3 +18,20 @@ export const sendVerificationEmail = async (
         html: `<p>Hello ${name}! Click <a href="${confirmationLink}">here</a> to verify your email</p>`,
     });
 };
+
+export const sendPasswordResetEmail = async (
+    email: string,
+    token: string,
+    name: string
+) => {
+    // Generating a password reset link
+    const passwordResetLink = `${process.env.APP_URL}/auth/new-password?token=${token}`;
+
+    // Sending the email
+    await resend.emails.send({
+        from: `Next Auth V5 <mail@graffixapp.com>`,
+        to: email,
+        subject: "Reset your password for Next Auth V5",
+        html: `<p>Hello ${name}! Click <a href="${passwordResetLink}">here</a> to reset your password</p>`,
+    });
+};

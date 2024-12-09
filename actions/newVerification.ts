@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { getUserByEmail } from "@/utils/user/getUserByEmail";
-import { getVerificationTokenByToken } from "@/utils/verification-token/getVerificationTokenByToken";
+import { getUserByEmail } from "@/utils/get-user/getUserByEmail";
+import { getVerificationTokenByToken } from "@/utils/get-verification-tokens/getVerificationTokenByToken";
 
 export const newVerification = async (token: string) => {
     // Fetching existing token from db
