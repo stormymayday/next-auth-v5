@@ -2,10 +2,12 @@ import Navbar from "@/app/(protected)/_components/Navbar";
 
 function ProtectedLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="h-full w-full flex flex-col gap-y-10 items-center justify-center bg-sky-500">
-            <Navbar />
-            {children}
-        </div>
+        <main className="bg-slate-200 h-full w-full flex justify-center">
+            <div className="w-[95vw] max-w-[95vw]">
+                <Navbar />
+                {children}
+            </div>
+        </main>
     );
 }
 export default ProtectedLayout;

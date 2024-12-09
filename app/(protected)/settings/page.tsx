@@ -1,43 +1,19 @@
 "use client";
 
-import { logout } from "@/actions/logout";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 function SettingsPage() {
     const user = useCurrentUser();
 
-    const onClick = () => {
-        logout();
-    };
-
     return (
-        <div className="bg-white p-10 rounded-xl">
-            {JSON.stringify(user)}
-            <button onClick={onClick}>sign out</button>
-        </div>
+        <section
+            className="mt-5 bg-slate-50 p-4 rounded-sm shadow-sm h-[80vh]"
+            style={{ minHeight: "calc(100vh - 7.7rem)" }}
+        >
+            <pre className="whitespace-pre-wrap break-words">
+                {JSON.stringify(user)}
+            </pre>
+        </section>
     );
 }
 export default SettingsPage;
-
-// import { auth, signOut } from "@/auth";
-// import { logout } from "@/actions/logout";
-
-// async function SettingsPage() {
-//     const session = await auth();
-
-//     return (
-//         <div>
-//             {JSON.stringify(session)}
-//             <form
-//                 action={async () => {
-//                     "use server";
-//                     // await signOut({ redirectTo: "/auth/login" });
-//                     await logout();
-//                 }}
-//             >
-//                 <button type="submit">sign out</button>
-//             </form>
-//         </div>
-//     );
-// }
-// export default SettingsPage;
