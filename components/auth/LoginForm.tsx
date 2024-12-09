@@ -33,6 +33,7 @@ function LoginForm() {
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
+    const [showTwoFactor, setShowTwoFactor] = useState(false);
 
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
@@ -47,26 +48,42 @@ function LoginForm() {
         setError("");
         setSuccess("");
 
+        // Reset showTwoFactor if necessary
+        if (!values.code) {
+            setShowTwoFactor(false);
+        }
+
         // Pending State
-        startTransition(async () => {
-            try {
-                setError("");
-                setSuccess("");
+        startTransition(() => {
+            login(values)
+                .then((data) => {
+                    if (data?.error) {
+                        // Checking 2FA specific error (Prevents resending the code)
+                        if (showTwoFactor && values.code) {
+                            setError("Invalid code!");
+                            // Clearing the input field
+                            form.setValue("code", "");
+                            return;
+                        }
 
-                const data: { error?: string; success?: string } = await login(
-                    values
-                );
+                        // Other errors
+                        setError(data.error);
+                        return;
+                    }
 
-                setError(data?.error ?? "");
-                setSuccess(data?.success ?? "");
-            } catch (error) {
-                const errorMsg =
-                    error instanceof Error
-                        ? error.message
-                        : "Something went wrong!";
-                // setError("Something went wrong!");
-                setError(errorMsg);
-            }
+                    if (data?.success) {
+                        form.reset();
+                        setSuccess(data.success);
+                        // Resetting 2FA state
+                        setShowTwoFactor(false);
+                        return;
+                    }
+
+                    if (data?.twoFactor) {
+                        setShowTwoFactor(true);
+                    }
+                })
+                .catch(() => setError("Something went wrong"));
         });
     }
 
@@ -83,51 +100,75 @@ function LoginForm() {
                     className="space-y-6"
                 >
                     <div className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            type="email"
-                                            maxLength={50}
-                                            disabled={isPending}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <PasswordInput
-                                            {...field}
-                                            maxLength={30}
-                                            disabled={isPending}
-                                        />
-                                    </FormControl>
-                                    <Button
-                                        size="sm"
-                                        variant="link"
-                                        asChild
-                                        className="px-0 font-normal"
-                                    >
-                                        <Link href="/auth/reset">
-                                            Forgot password?
-                                        </Link>
-                                    </Button>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        {showTwoFactor && (
+                            <FormField
+                                control={form.control}
+                                name="code"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Two Factor Code</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                value={field.value || ""}
+                                                maxLength={6}
+                                                disabled={isPending}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
+                        {!showTwoFactor && (
+                            <>
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Email</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    type="email"
+                                                    maxLength={50}
+                                                    disabled={isPending}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Password</FormLabel>
+                                            <FormControl>
+                                                <PasswordInput
+                                                    {...field}
+                                                    maxLength={30}
+                                                    disabled={isPending}
+                                                />
+                                            </FormControl>
+                                            <Button
+                                                size="sm"
+                                                variant="link"
+                                                asChild
+                                                className="px-0 font-normal"
+                                            >
+                                                <Link href="/auth/reset">
+                                                    Forgot password?
+                                                </Link>
+                                            </Button>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </>
+                        )}
                     </div>
                     <FormError message={error || urlError} />
                     <FromSuccess message={success} />
@@ -136,7 +177,13 @@ function LoginForm() {
                         className="min-w-full"
                         disabled={isPending}
                     >
-                        {isPending ? "Logging in..." : "Login"}
+                        {showTwoFactor
+                            ? isPending
+                                ? "Confirming..."
+                                : "Confirm"
+                            : isPending
+                            ? "Logging in..."
+                            : "Login"}
                     </Button>
                 </form>
             </Form>

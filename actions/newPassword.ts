@@ -1,26 +1,10 @@
 "use server";
 
 import { db } from "@/lib/db";
-// import { redirect } from "next/navigation";
-// import { revalidatePath } from "next/cache";
-// import { AuthError } from "next-auth";
 import * as z from "zod";
-import {
-    // LoginSchema,
-    // RegisterSchema,
-    // ResetPasswordSchema,
-    NewPasswordSchema,
-} from "@/schemas";
+import { NewPasswordSchema } from "@/schemas";
 import bcrypt from "bcryptjs";
 import { getUserByEmail } from "@/utils/get-user/getUserByEmail";
-// import { signIn } from "@/auth";
-// import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-// import {
-//     generateVerificationToken,
-//     generatePasswordResetToken,
-// } from "@/utils/tokens";
-// import { getVerificationTokenByToken } from "@/utils/verification-token";
-// import { sendVerificationEmail, sendPasswordResetEmail } from "@/utils/mail";
 import { getPasswordResetTokenByToken } from "@/utils/get-password-reset-tokens/getPasswordResetTokenByToken";
 
 export const newPassword = async (

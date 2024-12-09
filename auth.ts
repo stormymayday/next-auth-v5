@@ -6,6 +6,7 @@ import { getUserById } from "@/utils/get-user/getUserById";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { JWT } from "next-auth/jwt";
 import { UserRole } from "@prisma/client";
+import { getTwoFactorConfirmationByUserId } from "@/utils/get-two-factor-confirmation/getTwoFactorConfirmationByUserId";
 
 type ExtendedUser = DefaultSession["user"] & {
     role: UserRole;
@@ -64,7 +65,27 @@ export const {
                 return false;
             }
 
-            // TODO: Add 2FA check
+            // If 2FA is enabled
+            if (existingUser.isTwoFactorEnabled) {
+                // Getting 2FA Confirmation by userId
+                const twoFactorConfirmation =
+                    await getTwoFactorConfirmationByUserId(existingUser.id);
+
+                // Preventing singIn if there is no 2FA Confirmation
+                if (!twoFactorConfirmation) {
+                    return false;
+                }
+
+                // Otherwise,
+                // Deleting Two Factor confirmation for next signIn
+                await db.twoFactorConfirmation.delete({
+                    where: {
+                        id: twoFactorConfirmation.id,
+                    },
+                });
+
+                // Signing in...
+            }
 
             return true;
         },
