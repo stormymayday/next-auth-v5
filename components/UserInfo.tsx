@@ -3,7 +3,7 @@
 
 import { ExtendedUser } from "@/auth";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 
 interface UserInfoProps {
     user?: ExtendedUser;
