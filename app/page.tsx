@@ -22,7 +22,7 @@ export default function Home() {
                     🔐 Next Auth v5
                 </h1>
                 <div>
-                    <LoginButton>
+                    <LoginButton mode="modal" asChild>
                         <Button size="lg">Begin</Button>
                     </LoginButton>
                 </div>

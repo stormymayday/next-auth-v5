@@ -1,6 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+    DialogTitle,
+} from "@/components/ui/Dialog";
+import LoginForm from "@/components/auth/LoginForm";
 
 interface LoginButtonProps {
     children: React.ReactNode;
@@ -11,8 +18,8 @@ interface LoginButtonProps {
 function LoginButton({
     children,
     mode = "redirect",
-}: // asChild,
-LoginButtonProps) {
+    asChild,
+}: LoginButtonProps) {
     const router = useRouter();
 
     const handleClick = () => {
@@ -20,7 +27,15 @@ LoginButtonProps) {
     };
 
     if (mode === "modal") {
-        return <span>TODO: Implement modal</span>;
+        return (
+            <Dialog>
+                <DialogTrigger asChild={asChild}>{children}</DialogTrigger>
+                <DialogContent className="p-0 w-auto bg-transparent border-none">
+                    <DialogTitle className="sr-only">Login</DialogTitle>
+                    <LoginForm />
+                </DialogContent>
+            </Dialog>
+        );
     }
 
     return (
