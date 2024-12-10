@@ -30,6 +30,9 @@ import Link from "next/link";
 
 function LoginForm() {
     const searchParams = useSearchParams();
+
+    const callbackUrl = searchParams.get("callbackUrl");
+
     const urlError =
         searchParams.get("error") === "OAuthAccountNotLinked"
             ? "Email already in use with different provider!"
@@ -60,7 +63,7 @@ function LoginForm() {
 
         // Pending State
         startTransition(() => {
-            login(values)
+            login(values, callbackUrl)
                 .then((data) => {
                     if (data?.error) {
                         // Checking 2FA specific error (Prevents resending the code)
