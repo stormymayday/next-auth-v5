@@ -50,7 +50,16 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
             user.name || "User"
         );
 
-        return { success: "Verification email sent" };
+        // return { success: "Verification email sent" };
+        // removing verification
+        await db.user.update({
+            where: {
+                id: user.id,
+            },
+            data: {
+                emailVerified: null,
+            },
+        });
     }
 
     // Handling passwords
