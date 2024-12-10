@@ -51,47 +51,102 @@ function LoginForm() {
         },
     });
 
-    function onSubmit(values: z.infer<typeof LoginSchema>) {
-        // Clearing error and success
+    async function onSubmit(values: z.infer<typeof LoginSchema>) {
+        // Reset all state variables at the start of submission
         setError("");
         setSuccess("");
 
-        // Reset showTwoFactor if necessary
-        if (!values.code) {
-            setShowTwoFactor(false);
-        }
+        // Determine whether to reset two-factor state
+        const shouldResetTwoFactor = !values.code;
 
-        // Pending State
-        startTransition(() => {
-            login(values, callbackUrl)
-                .then((data) => {
-                    if (data?.error) {
-                        // Checking 2FA specific error (Prevents resending the code)
-                        if (showTwoFactor && values.code) {
-                            setError("Invalid code!");
-                            // Clearing the input field
-                            form.setValue("code", "");
-                            return;
-                        }
+        startTransition(async () => {
+            try {
+                // Log the input values for debugging (sanitized)
+                // console.log("Login Attempt", {
+                //     email: values.email.substring(0, 3) + "***",
+                //     hasPassword: !!values.password,
+                //     hasCode: !!values.code,
+                // });
 
-                        // Other errors
-                        setError(data.error);
+                // Explicitly typing the login function's return
+                const data: {
+                    error?: string;
+                    success?: string;
+                    twoFactor?: boolean;
+                    redirect?: string;
+                } | null = await login(values, callbackUrl);
+
+                // null and undefined checks
+                if (!data) {
+                    setError("No response received from server");
+                    console.error("Login returned null or undefined");
+                    return;
+                }
+
+                // Handling redirect explicitly
+                if (data.redirect) {
+                    // console.log("Redirecting to:", data.redirect);
+                    window.location.href = data.redirect;
+                    return;
+                }
+
+                // Error handling
+                if (data.error) {
+                    // 2FA specific
+                    if (showTwoFactor && values.code) {
+                        form.setValue("code", "");
+                        setError("Invalid two-factor authentication code");
                         return;
                     }
 
-                    if (data?.success) {
-                        form.reset();
-                        setSuccess(data.success);
-                        // Resetting 2FA state
+                    // Handling other login errors
+                    setError(data.error);
+                    return;
+                }
+
+                // Successful login
+                if (data.success) {
+                    form.reset();
+                    setSuccess(data.success);
+
+                    // Resetting two-factor state
+                    if (shouldResetTwoFactor) {
                         setShowTwoFactor(false);
-                        return;
                     }
+                    return;
+                }
 
-                    if (data?.twoFactor) {
-                        setShowTwoFactor(true);
-                    }
-                })
-                .catch(() => setError("Something went wrong"));
+                // Triggering two-factor authentication
+                if (data.twoFactor) {
+                    setShowTwoFactor(true);
+                }
+            } catch (error) {
+                // Handling Next.js redirect error
+                if (
+                    error instanceof Error &&
+                    error.message === "NEXT_REDIRECT"
+                ) {
+                    // console.log("Redirect caught:", error);
+                    return;
+                }
+
+                // Detailed error logging with type checking
+                if (error instanceof Error) {
+                    // console.error("Detailed Error:", {
+                    //     name: error.name,
+                    //     message: error.message,
+                    //     stack: error.stack,
+                    // });
+
+                    // More specific error handling
+                    setError(
+                        error.message || "An unexpected login error occurred"
+                    );
+                } else {
+                    console.error("Unknown error type:", error);
+                    setError("An unexpected login error occurred");
+                }
+            }
         });
     }
 
