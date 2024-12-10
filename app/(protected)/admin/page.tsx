@@ -6,17 +6,27 @@ import { Button } from "@/components/ui/Button";
 import FormSuccess from "@/components/FormSuccess";
 import { UserRole } from "@prisma/client";
 import { toast } from "sonner";
+import { adminTest } from "@/actions/admin-test";
 
 function AdminPage() {
     const onApiRouteClick = async () => {
         const response = await fetch("/api/admin");
 
         if (response.ok) {
-            // console.log("access granted");
-            toast.success("access granted");
+            toast.success("API ROUTE: access granted");
         } else {
-            // console.log("access denied");
-            toast.error("access denied");
+            toast.error("API ROUTE: access denied");
+        }
+    };
+
+    const onServerActionClick = async () => {
+        const response = await adminTest();
+
+        if (response.success) {
+            toast.success(response.success);
+        }
+        if (response.error) {
+            toast.error(response.error);
         }
     };
 
@@ -45,7 +55,9 @@ function AdminPage() {
                         <p className="text-sm font-medium">
                             Admin-only Server Action
                         </p>
-                        <Button>Click to test</Button>
+                        <Button onClick={onServerActionClick}>
+                            Click to test
+                        </Button>
                     </div>
                 </CardContent>
             </Card>
