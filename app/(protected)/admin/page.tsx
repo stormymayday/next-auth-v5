@@ -31,37 +31,26 @@ function AdminPage() {
     };
 
     return (
-        <section
-            className="mt-5 bg-slate-50 p-4 rounded-sm shadow-sm h-[80vh] flex items-center justify-center"
-            style={{ minHeight: "calc(100vh - 7.7rem)" }}
-        >
-            <Card className="w-[90vw] max-w-[600px]">
-                <CardHeader>
-                    <p className="text-2xl font-semibold text-center">
-                        🔑 Admin
+        <Card className="w-[95vw] max-w-[600px]">
+            <CardHeader>
+                <p className="text-2xl font-semibold text-center">🔑 Admin</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <RoleGate allowedRole={UserRole.ADMIN}>
+                    <FormSuccess message="Access granted!" />
+                </RoleGate>
+                <div className="flex flex-row items-center justify-between rounded-sm border p-3 shadow-md">
+                    <p className="text-sm font-medium">Admin-only API Route</p>
+                    <Button onClick={onApiRouteClick}>Click to test</Button>
+                </div>
+                <div className="flex flex-row items-center justify-between rounded-sm border p-3 shadow-md">
+                    <p className="text-sm font-medium">
+                        Admin-only Server Action
                     </p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <RoleGate allowedRole={UserRole.ADMIN}>
-                        <FormSuccess message="Access granted!" />
-                    </RoleGate>
-                    <div className="flex flex-row items-center justify-between rounded-sm border p-3 shadow-md">
-                        <p className="text-sm font-medium">
-                            Admin-only API Route
-                        </p>
-                        <Button onClick={onApiRouteClick}>Click to test</Button>
-                    </div>
-                    <div className="flex flex-row items-center justify-between rounded-sm border p-3 shadow-md">
-                        <p className="text-sm font-medium">
-                            Admin-only Server Action
-                        </p>
-                        <Button onClick={onServerActionClick}>
-                            Click to test
-                        </Button>
-                    </div>
-                </CardContent>
-            </Card>
-        </section>
+                    <Button onClick={onServerActionClick}>Click to test</Button>
+                </div>
+            </CardContent>
+        </Card>
     );
 }
 

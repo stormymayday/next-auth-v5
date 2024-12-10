@@ -16,6 +16,11 @@ import {
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSlot,
+} from "@/components/ui/OTPInput";
 import FormError from "@/components/FormError";
 import FromSuccess from "@/components/FormSuccess";
 import { login } from "@/actions/login";
@@ -101,24 +106,41 @@ function LoginForm() {
                 >
                     <div className="space-y-4">
                         {showTwoFactor && (
-                            <FormField
-                                control={form.control}
-                                name="code"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Two Factor Code</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                value={field.value || ""}
-                                                maxLength={6}
-                                                disabled={isPending}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            <div className="flex justify-center text-center">
+                                <FormField
+                                    control={form.control}
+                                    name="code"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Two Factor Code
+                                            </FormLabel>
+                                            <FormControl>
+                                                <InputOTP
+                                                    maxLength={6}
+                                                    value={field.value || ""}
+                                                    onChange={field.onChange}
+                                                    disabled={isPending}
+                                                >
+                                                    <InputOTPGroup>
+                                                        {[...Array(6)].map(
+                                                            (_, index) => (
+                                                                <InputOTPSlot
+                                                                    key={index}
+                                                                    index={
+                                                                        index
+                                                                    }
+                                                                />
+                                                            )
+                                                        )}
+                                                    </InputOTPGroup>
+                                                </InputOTP>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                         )}
                         {!showTwoFactor && (
                             <>
