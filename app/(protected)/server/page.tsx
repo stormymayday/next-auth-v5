@@ -1,5 +1,5 @@
 // import { auth } from "@/auth";
-import { currentUser } from "@/utils/current-user-server/auth";
+import { currentUser } from "@/utils/server-current-user/currentUser";
 import UserInfo from "@/components/UserInfo";
 
 async function ServerPage() {
